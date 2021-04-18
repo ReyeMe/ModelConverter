@@ -77,14 +77,16 @@
                 throw new Exception("Maximum number of textures refereced in one file can be 256!");
             }
 
+            Dictionary<string, ModelData.Material> materials = model.MaterialTextures.OrderBy(material => material.Value.Texture == null).ToDictionary(item => item.Key, item => item.Value);
+
             TmfHeader header = new TmfHeader
             {
                 Type = TmFType.Static,
                 TextureCount = (byte)model.MaterialTextures.Count,
                 ModelCount = (byte)model.Count,
                 Reserved = Enumerable.Repeat((byte)0x00, 5).ToArray(),
-                Textures = model.MaterialTextures.Select(material => TankModelFormat.GetTextureEntry(material.Value)).ToArray(),
-                Models = model.Select(item => TankModelFormat.GetModelEntry(item, model.MaterialTextures, model.Vertices, model.Normals)).ToArray()
+                Textures = materials.Select(material => TankModelFormat.GetTextureEntry(material.Value)).ToArray(),
+                Models = model.Select(item => TankModelFormat.GetModelEntry(item, materials, model.Vertices, model.Normals)).ToArray()
             };
 
             File.WriteAllBytes(filePath, TankModelFormat.GetBytes(header));
