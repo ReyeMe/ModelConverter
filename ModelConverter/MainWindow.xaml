@@ -1,0 +1,79 @@
+﻿<Window x:Class="ModelConverter.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ModelConverter"
+        xmlns:sys="clr-namespace:System;assembly=System"
+        xmlns:views="clr-namespace:ModelConverter.Views"
+        mc:Ignorable="d"
+        Title="Model converter" SizeToContent="WidthAndHeight" Loaded="WindowLoaded">
+    <Window.DataContext>
+        <views:MainView/>
+    </Window.DataContext>
+    <Grid MinWidth="640" MinHeight="480">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Menu Grid.Row="0">
+            <MenuItem Header="_File" HorizontalAlignment="Left">
+                <MenuItem Header="_Open" Command="{Binding OpenFileCommand}">
+                    <MenuItem.Icon>
+                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE838;" TextAlignment="Center" VerticalAlignment="Center"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="_Export" Command="{Binding ExportFileCommand}">
+                    <MenuItem.Icon>
+                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE74E;" TextAlignment="Center" VerticalAlignment="Center"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+            <MenuItem Header="_Help" HorizontalAlignment="Left">
+                <MenuItem Header="_Plugins" Command="{Binding OpenPluginListCommand}">
+                    <MenuItem.Icon>
+                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xEA86;" TextAlignment="Center" VerticalAlignment="Center"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="_About" Command="{Binding OpenAboutCommand}">
+                    <MenuItem.Icon>
+                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xEE57;" TextAlignment="Center" VerticalAlignment="Center"/>
+                    </MenuItem.Icon>
+                </MenuItem>
+            </MenuItem>
+        </Menu>
+        <Grid Grid.Row="1" x:Name="CaptureGrid"
+              MouseMove="Viewport3DMouseMove" MouseUp="Viewport3DMouseUp" MouseWheel="Viewport3DMouseWheel">
+            <Grid.Background>
+                <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                    <GradientStop Color="#AA000000" Offset="1"/>
+                    <GradientStop Color="#55001F29"/>
+                </LinearGradientBrush>
+            </Grid.Background>
+            <Viewport3D x:Name="Viewport">
+                <ModelVisual3D>
+                    <ModelVisual3D.Content>
+                        <Model3DGroup Children="{Binding Scene}"/>
+                    </ModelVisual3D.Content>
+                </ModelVisual3D>
+                <Viewport3D.Camera>
+                    <PerspectiveCamera FarPlaneDistance="{Binding Camera.FarPlane}" 
+                                       NearPlaneDistance="{Binding Camera.NearPlane}"
+                                       FieldOfView="{Binding Camera.FieldOfView}"
+                                       LookDirection="{Binding Camera.Direction}"
+                                       UpDirection="{Binding Camera.UpDirection}"
+                                       Position="{Binding Camera.Position}" />
+                </Viewport3D.Camera>
+                <Viewport3D.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Rotate _Left" Command="{Binding RotateLeftCommand}" IsEnabled="{Binding SelectedFace, TargetNullValue=False}"/>
+                        <MenuItem Header="Rotate _Right" Command="{Binding RotateRightCommand}" IsEnabled="{Binding SelectedFace, TargetNullValue=False}"/>
+                        <Separator/>
+                        <MenuItem Header="_Double sided" IsCheckable="True" IsChecked="{Binding IsSelectedFaceDoubleSided}" IsEnabled="{Binding SelectedFace, TargetNullValue=False}"/>
+                        <MenuItem Header="_Mesh" IsCheckable="True" IsChecked="{Binding IsSelectedFaceMesh}" IsEnabled="{Binding SelectedFace, TargetNullValue=False}"/>
+                    </ContextMenu>
+                </Viewport3D.ContextMenu>
+            </Viewport3D>
+        </Grid>
+    </Grid>
+</Window>
