@@ -177,6 +177,8 @@
             {
                 this.selectedFace = value;
                 this.RaisePropertyChanged();
+                this.RaisePropertyChanged(nameof(this.IsSelectedFaceDoubleSided));
+                this.RaisePropertyChanged(nameof(this.IsSelectedFaceMesh));
             }
         }
 

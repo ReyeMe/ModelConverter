@@ -190,7 +190,8 @@
                 TextureIndex = (byte)materialIndex,
                 Indexes = indexes,
                 Normal = TankModelFormat.GetVertice(faceVector.X, faceVector.Y, faceVector.Z),
-                Flags = TmfFaceFlags.None
+                Flags = TmfFaceFlags.None,
+                Reserved = new byte[] { 0, 0 }
             };
 
             if (face.IsMesh)
@@ -246,14 +247,12 @@
             {
                 string file = Path.GetFileName(material.TexturePath).ToUpper();
                 byte[] bytes = Encoding.ASCII.GetBytes(file).Take(13).ToArray();
-                entry.Length = (byte)file.Length;
-                entry.FileName = bytes.Concat(Enumerable.Repeat(byte.MinValue, 13 - bytes.Length)).ToArray();
+                entry.FileName = bytes.Concat(Enumerable.Repeat((byte)'\0', 13 - bytes.Length)).ToArray();
                 entry.Color = Enumerable.Repeat(byte.MaxValue, 3).ToArray();
             }
             else
             {
-                entry.Length = 0;
-                entry.FileName = Enumerable.Repeat(byte.MinValue, 13).ToArray();
+                entry.FileName = Enumerable.Repeat((byte)'\0', 13).ToArray();
                 entry.Color = new byte[]
                 {
                     material.Color.Color.R,
@@ -336,6 +335,13 @@
             /// Texture index
             /// </summary>
             public byte TextureIndex;
+
+            /// <summary>
+            /// Reserved space
+            /// </summary>
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+            public byte[] Reserved;
+
         }
 
         /// <summary>
@@ -360,7 +366,7 @@
             public byte ModelCount;
 
             /// <summary>
-            /// Reserved sapce for future stuff
+            /// Reserved space for future stuff
             /// </summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
             public byte[] Reserved;
@@ -409,11 +415,6 @@
         [StructLayout(LayoutKind.Sequential)]
         public struct TmfTextureEntry
         {
-            /// <summary>
-            /// Length of the file name
-            /// </summary>
-            public byte Length;
-
             /// <summary>
             /// File name
             /// </summary>
