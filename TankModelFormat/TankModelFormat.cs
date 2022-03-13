@@ -86,7 +86,7 @@
                 ModelCount = (byte)model.Count,
                 Reserved = Enumerable.Repeat((byte)0x00, 5).ToArray(),
                 Textures = materials.Select(material => TankModelFormat.GetTextureEntry(material.Value)).ToArray(),
-                Models = model.Select(item => TankModelFormat.GetModelEntry(item, materials, model.Vertices, model.Normals)).ToArray()
+                Models = model.OrderBy(item => item.Name).Select(item => TankModelFormat.GetModelEntry(item, materials, model.Vertices, model.Normals)).ToArray()
             };
 
             File.WriteAllBytes(filePath, TankModelFormat.GetBytes(header));

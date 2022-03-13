@@ -51,6 +51,7 @@
             });
 
             Utilities.PluginLoader.Load();
+            this.Settings = Settings.Load();
         }
 
         /// <summary>
@@ -183,6 +184,11 @@
         }
 
         /// <summary>
+        /// Gets application settings
+        /// </summary>
+        public Settings Settings { get; }
+
+        /// <summary>
         /// Make grid
         /// </summary>
         /// <returns>WPF 3D grid</returns>
@@ -264,11 +270,15 @@
                     OverwritePrompt = true,
                     AddExtension = true,
                     Title = "Export model file",
+                    InitialDirectory = string.IsNullOrWhiteSpace(this.Settings.LastExportPath) ? string.Empty : this.Settings.LastExportPath,
                     ValidateNames = true
                 };
 
                 if (saveFile.ShowDialog().Value)
                 {
+                    this.Settings.LastExportPath = System.IO.Path.GetDirectoryName(saveFile.FileName);
+                    this.Settings.Save();
+
                     try
                     {
                         plugins[saveFile.FilterIndex - 1].Run(this.loadedModels, saveFile.FileName);
@@ -303,12 +313,15 @@
                     ShowReadOnly = true,
                     CheckFileExists = true,
                     CheckPathExists = true,
+                    InitialDirectory = string.IsNullOrWhiteSpace(this.Settings.LastOpenPath) ? string.Empty : this.Settings.LastOpenPath,
                     Title = "Open model file"
                 };
 
                 if (openFile.ShowDialog(App.Current.MainWindow).Value)
                 {
                     Utilities.ModelData.ModelCollection loaded = null;
+                    this.Settings.LastOpenPath = System.IO.Path.GetDirectoryName(openFile.FileName);
+                    this.Settings.Save();
 
                     try
                     {

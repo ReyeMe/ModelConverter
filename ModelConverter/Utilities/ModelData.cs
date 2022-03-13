@@ -144,6 +144,7 @@
                         if (faceVertices.Any() && indexes.Any())
                         {
                             // Assign material brush
+                            indexes.Reverse();
                             Brush materialBrush = Brushes.White;
 
                             if (!string.IsNullOrEmpty(face.Material) && models.MaterialTextures.ContainsKey(face.Material))
